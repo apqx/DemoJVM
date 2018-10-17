@@ -25,13 +25,11 @@ class Server(port: Int) {
         serverSocketChannel.socket().bind(InetSocketAddress(port))
         println("server listener $port")
         netTransfer = NetTransfer(serverSocketChannel.accept(), "s")
-        netTransfer.setOnCmdReceiveListener(object : NetTransfer.IOnCmdReceiveListener{
-            override fun onCmdReceive(bytes: ByteArray) {
-                GlobalScope.launch(Dispatchers.Default) {
-                    netTransfer.writeCmd(byteArrayOf((bytes[0] * 10).toByte(), bytes[1], bytes[2]))
-                }
+        netTransfer.setOnCmdReceiveListener{
+            GlobalScope.launch(Dispatchers.Default) {
+                netTransfer.writeCmd(byteArrayOf((it[0] * 10).toByte(), it[1], it[2]))
             }
-        })
+        }
     }
 
     suspend fun close() {

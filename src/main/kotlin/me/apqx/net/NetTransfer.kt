@@ -19,7 +19,7 @@ class NetTransfer(private val socketChannel: SocketChannel, private val id: Stri
      */
     private val readTempChannel: Channel<ByteArray> = Channel(50)
 
-    private lateinit var listener: IOnCmdReceiveListener
+    private lateinit var listener: (ByteArray) -> Unit
 
     init {
         readJob = startReadCmd()
@@ -43,7 +43,7 @@ class NetTransfer(private val socketChannel: SocketChannel, private val id: Stri
             readBuffer.clear()
             println("$id <= ${bytes.toHexString()}")
             if (this@NetTransfer::listener.isInitialized) {
-                listener.onCmdReceive(bytes)
+                listener.invoke(bytes)
             }
             if (readTempChannel.isFull) {
                 // 当缓存队列存满时，删除最早的那条数据
@@ -103,7 +103,7 @@ class NetTransfer(private val socketChannel: SocketChannel, private val id: Stri
         return bytes
     }
 
-    fun setOnCmdReceiveListener(listener: IOnCmdReceiveListener) {
+    fun setOnCmdReceiveListener(listener: (ByteArray) -> Unit) {
         this.listener = listener
     }
 
@@ -117,9 +117,5 @@ class NetTransfer(private val socketChannel: SocketChannel, private val id: Stri
         } finally {
             println("$id socketChannel closed")
         }
-    }
-
-    interface IOnCmdReceiveListener {
-        fun onCmdReceive(bytes: ByteArray)
     }
 }
