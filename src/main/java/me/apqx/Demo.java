@@ -1,31 +1,30 @@
 package me.apqx;
 
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 public class Demo {
     public static void main(String[] args) {
-        for (int i = 0; i < 10; i++) {
-            System.out.println(Math.exp(i));
-        }
-        System.out.println(1e2);
+        String str = "{\n" +
+                "            \"name\": \"MA\",\n" +
+                "            \"id\": 4,\n" +
+                "            \"param\": {\n" +
+                "                \"MA1\": 5,\n" +
+                "                \"MA2\": 10,\n" +
+                "                \"MA3\": 20,\n" +
+                "                \"MA4\": 30,\n" +
+                "                \"MA5\": 60\n" +
+                "            },\n" +
+                "            \"isOpen\": 1\n" +
+                "        }";
+        Obj obj = new GsonBuilder().create().fromJson(str, Obj.class);
+        System.out.println(obj.param);
     }
 
-
-
-}
-class Tools {
-    private Object object;
-
-    private Man man = new Man(object);
-
-    public Tools() {
-        object = "3";
+    class Obj {
+        JsonObject param;
     }
-}
 
-class Man {
-    public Man(Object object) {
-        System.out.println(object == null);
-    }
 }
